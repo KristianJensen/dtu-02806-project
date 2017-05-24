@@ -1,0 +1,153 @@
+
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	    <meta charset="UTF-8">
+		<style>
+			div.tooltip {	
+			    position: absolute;			
+			    text-align: center;			
+			    width: 80px;					
+			    height: 40px;					
+			    padding: 2px;				
+			    font: 12px sans-serif;		
+			    background: lightsteelblue;	
+			    border: 0px;		
+			    border-radius: 8px;			
+			    pointer-events: none;			
+			}
+		</style>
+	    
+		<title>Project: Scatter plots</title>
+	    <script type="text/javascript" src="d3/d3.min.js"></script>
+		<!--<link rel="stylesheet" href="mystyle.css">-->
+	</head>
+    
+	<body>
+		<p>This will hopefully be a plot showing the regression score of each gene at some point</p>
+		<script type="text/javascript">
+		
+		//Defining size of figures
+		var w = 600; 
+		var h = 500;
+		var padding = 80;
+		var tooltip_pad = 10;
+		
+		d3.tsv("gene_transciptomics_coefficients.tsv", function(trans_coef) {
+			  console.log(trans_coef);
+			  var trans_coef_dat = trans_coef;
+			  
+			  var maxX = d3.max(trans_coef_dat, function(d) {return parseFloat(d["mean"]) });
+			  var minX = d3.min(trans_coef_dat, function(d) {return parseFloat(d["mean"]) });
+			  var maxY = d3.max(trans_coef_dat, function(d) {return parseFloat(d["stderr"]) });
+			  var minY = d3.min(trans_coef_dat, function(d) {return parseFloat(d["stderr"]) });
+
+	 	// Defining the scales
+		var xScale = d3.scale.linear()
+			.domain([minX, maxX])
+			.range([padding, w - padding])
+			.nice();
+		var yScale = d3.scale.linear()
+			.domain([minY, maxY])
+			.range([h - padding, padding])
+			.nice();
+       
+		// Defining the axes
+		var xAxis = d3.svg.axis() 
+			.scale(xScale)
+            .orient("bottom");
+			//.ticks(5);
+		var yAxis = d3.svg.axis() 
+			.scale(yScale)
+            .orient("left");
+            //.ticks(5);
+			
+		//Create SVG element
+		var svg = d3.select("body")
+			.append("svg")
+			.attr("width", w)
+			.attr("height", h);
+			
+		// Add the tooltip area to the webpage
+		/*var tooltip = d3.select("body")
+			.append("div")
+		    .attr("class", "tooltip")
+		    .style("opacity", .8)
+			.style("background-color", "white")
+			.style("position", "absolute")
+			.style("border", "solid black 1px");*/
+		// Define the div for the tooltip
+		var div = d3.select("body").append("div")	
+		    .attr("class", "tooltip")				
+		    .style("opacity", 0);
+			
+		//Create X axis on the plot
+		svg.append("g")
+			.attr("class", "axis")
+			.attr("transform", "translate (0, "+(h-padding) + ")")
+			.call(xAxis)
+	  	  .append("text")
+	        .attr("class", "label")
+	        .attr("x", w/2)
+	        .attr("y", 40)
+	        .style("text-anchor", "middle")
+	        .text("Regression score (mean)");
+		
+		//axis for D4
+		/*svg.append("g")
+			.call(d3.axisBottom().scale(xScale))
+			.attr("transform", "translate (0, "+(h-padding) + ")");*/
+		
+		/*//Create Y axis on the plot
+		svg.append("g")
+			.attr("class", "axis")
+			.attr("transform", "translate(" + padding + ",0)")
+			.call(yAxis)
+	  	  .append("text")
+	        .attr("class", "label")
+			.attr("transform", "rotate(-90)")
+	        .attr("y", -30)
+			.attr("x", -h/2)
+	        .style("text-anchor", "middle")
+	        .text("Std. error");*/
+			
+				
+	   
+		// Creating circles on scatter
+		svg.selectAll("circle")
+	        .data(trans_coef_dat)
+	        .enter()
+	        .append("circle")
+			.attr("cx", function(d) { 
+				return xScale(d['mean']);
+			})
+			.attr("cy", function(d) {
+				return (h-h*0.2)-((Math.random()*(h*0.85))+1);})
+			.attr("r", function(d) { 
+				return 2})
+			.attr('fill', 'blue')
+			.attr("opacity", 0.5)
+			.on("mouseover", function(d) {
+				div.transition()
+					.duration(200)
+					.style("opacity", .9);
+				div.html("<b>"+d["NCBI_GENE_ID"]+"</b>" + "<br/> Mean: "+d3.format(".2f")(d["mean"]) 
+					+"<br/> Stderr: "+d3.format(".2f")(d["stderr"]))
+	 			   	.style("left", d3.event.pageX + "px")
+	                .style("top", d3.event.pageY + "px")
+					.style("font-size", 11 + "px");
+			})
+			.on("mouseout", function(d) {
+				div.transition()
+					.duration(500)
+				.style("opacity", 0);
+			});
+			
+				
+
+	   
+	   
+	   });
+	    </script>
+    </body>
+</html>
