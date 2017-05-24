@@ -25,12 +25,11 @@
     
 	<body>
 		<p>This will hopefully be a plot showing the regression score of each gene at some point</p>
-		<form name="myform" onSubmit="return handleClick()">
-		            <input name="Submit"  type="submit" value="Lower value" >
+		<form name="myform" >
+		            
 		            <input type="number" id="ylow" placeholder="Add lower coordinate&hellip;">
-				</br>
-		            <input name="Submit"  type="submit" value="Upper value" >
 		            <input type="number" id="yhigh" placeholder="Add upper coordinate&hellip;">
+					<input name="Submit" id="submitted"  type="submit" value="Submit values" >
 		        </form>
 		<script type="text/javascript">
 		
@@ -51,8 +50,10 @@
 
 			trans_coef_dat.sort(function(x,y) {
 				return d3.ascending(parseFloat(x.mean), parseFloat(y.mean));
-			})  
-
+			})
+			
+	
+			
 		 	// Defining the scales
 			var xScale = d3.scaleLinear()
 				.domain([minX, maxX])
@@ -173,6 +174,22 @@
 					div.transition()
 						.duration(500)
 					.style("opacity", 0);
+				});
+				
+				d3.select("#submitted").on("click", function(){
+					var lowy = parseFloat(document.getElementById("ylow").value)
+					var highy = parseFloat(document.getElementById("yhigh").value)
+			      	yScale // change the yScale
+			        	.domain([lowy, highy])
+					yAxis.scale(yScale)
+			      	//d3.select('#yAxis') // redraw the yAxis
+			        //	.transition().duration(1000)
+				    d3.selectAll('circle') // move the circles
+						.data(trans_coef_dat)
+						.change()
+				        //.transition().duration(1000)
+				          .attr('cy',function (d,i) { return yScale(i)
+						  })
 				});
 			
 
