@@ -6,28 +6,99 @@
 	width: 50px;
 }
 
+body {
+	padding: 0px;
+	font-family: sans-serif;
+	text-align: center;
+}
+
+#container {
+	text-align: center;
+	width: 100%;
+	display: block;
+}
+
 div.tooltip {	
     position: absolute;			
     text-align: center;			
-    width: 60px;					
+    width: 80px;					
     //height: 40px;					
     padding: 2px;				
     font: 12px sans-serif;		
-    background: sandybrown;	
-    border: 0px;		
+    background: #B0C4DE;	
+    border: 1px solid black;		
     border-radius: 8px;			
-    pointer-events: none;			
+    pointer-events: none;		
 }
 
-h1 {
+#header-div {
 	text-align: center;
+	background-color: #dddddd;
+	margin: 0px;
+	padding-top: 20px;
+	border-bottom: 2px solid firebrick;
 }
 
-.figure-div {
+#header-div {
+	font-family: sans-serif;
+}
+
+#description {
+	background-color: #FAF0E6;
+	border-radius: 20px;
+	width: 40%;
+	margin: 20px;
+	margin-left: 30%;
+	margin-right: 30%;
+	margin-bottom: 50px;
+	padding: 10px;
+	display: block;
+	
+}
+
+
+#figure-menu {
+	background-color: #eeeeee;
+}
+
+a {
+	color: white;
+	text-decoration: none;
+}
+
+a:visited {
+	color: white;
+}
+
+#figure-menu li {
+	display: inline-block;
+	text-align: center;
+	padding: 10px;
+	margin: 10px;
+	background-color: firebrick;
+	border: 1px solid;
+	border-radius: 10px;
+}
+
+#figure-menu li:hover {
+	background-color: #ff5589;
+}
+
+#figure-menu li.selected {
+	background-color: #ff5589;
+}
+
+#figure-div {
 	text-align: center;
 	width: 100%;
+	padding-top: 100px;
+	display: block;
 }
 
 #figure-div {
 	position: absolute;
+}
+
+.dot {
+	fill: red;
 }
