@@ -1,7 +1,7 @@
 var load_figure_1 = function() {
 	d3.select("#figure-div").html("");
 	
-	d3.select("#description").html("<b>Strain comparison</b><br>Transcription levels of all genes. Use the drop-down menus to select which strains to compare.<br><br>")
+	d3.select("#description").html("<b>Strain comparison</b><br><br>Transcription levels of all genes. Use the drop-down menus to select which strains to compare.<br><br>")
 	
 	// Figure size and margin
 	var w = 600; 
@@ -227,7 +227,7 @@ var load_figure_2 = function() {
 	d3.select("#figure-div").html("");
 	
 	d3.select("#description").html(
-		"<b>Strain overview</b><br>"
+		"<b>Strain overview</b><br><br>"
 		+ "Shows the transcription levels for all genes in the 5 strains. Hover over a dot to see the name of the gene. "
 	);
 	
@@ -362,7 +362,7 @@ var load_figure_3 = function() {
 	d3.select("#figure-div").html("");
 	
 	d3.select("#description").html(
-		"<b>Regression coefficients</b><br>"
+		"<b>Regression coefficients</b><br><br>"
 		+ "A linear regression analysis was performed on all strains using transcription levels as predictors and a relevant fitness value as outcome. "
 		+ "The regression coefficients of each gene are shown below, sorted by the coefficient values. Error bars show the standard error of the estimates."
 	);
