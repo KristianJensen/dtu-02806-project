@@ -4,15 +4,27 @@
     <meta charset="UTF-8">
     <title>Transcriptomics data</title>
     <script type="text/javascript" src="d3/d3.js"></script>
+	<script type="text/javascript" src="javascript/load_figures.js"></script>
 	<link rel="stylesheet", href="stylesheets/main.css">
-	<!--<link rel="stylesheet" href="mystyle.css">-->
 </head>
 <body>
 <h1>Transcriptomics data</h1>
-<p style="text-align:center">
-	<a href="figure_1.html">Figure 1</a><br>
-	<a href="figure_2.html">Figure 2</a><br>
-	<a href="figure_3.html">Figure 3</a><br>
-</p>
+<ul id="figure-menu">
+	<li id="fig1-link"><a href="#">Figure 1</a></li>
+	<li id="fig2-link"><a href="#">Figure 2</a></li>
+	<li id="fig3-link"><a href="#">Figure 3</a></li>
+</ul>
+<div id="figure-div"></div>
+<script>
+	d3.select("#fig1-link").on("click", function() {
+		load_figure_1();
+	})
+	d3.select("#fig2-link").on("click", function() {
+		load_figure_2();
+	})
+	d3.select("#fig3-link").on("click", function() {
+		load_figure_3();
+	})
+</script>
 </body>
 </html>

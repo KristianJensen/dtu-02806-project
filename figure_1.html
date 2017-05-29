@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<style>
+		div.tooltip {	
+		    position: absolute;			
+		    text-align: center;			
+		    width: 60px;					
+		    height: 40px;					
+		    padding: 2px;				
+		    font: 12px sans-serif;		
+		    background: sandybrown;	
+		    border: 0px;		
+		    border-radius: 8px;			
+		    pointer-events: none;			
+		}
+	</style>
+    <title>Project: Scatter plots</title>
+    <script type="text/javascript" src="d3/d3.min.js"></script>
+	<!--<link rel="stylesheet" href="mystyle.css">-->
+</head>
+
+<body>
+	<h1>Project - Scatter plots</h1>
+	
+	<div id="viz-one" class="viz-div">
+		<h2>Transcriptomics</h2>
+		<p>
+			HEJ HEJ
+		</p>
+		<p>
+			Click to switch ....
+		</p>
+		<div class="svg-div"></div>
+		<p>
+			Text below the svg visualisation
+		</p>
+	
+	</div>
+
+	
+	<script type="text/javascript">
+		
+		// Figure size and margin
+		var w = 600; 
+		var h = 500;
+		var padding = 80;
+		var tooltip_pad = 10;
+		var margin = 60;
+		var selectData = [ 	{ "text": "St1_trans"},
+							{ "text": "St2_trans"},
+							{ "text": "St3_trans"},
+							{ "text": "St4_trans"},
+							{ "text": "St5_trans"}]
+		
+		d3.tsv("final_trans_data.tsv", function(dataset) {
+			var body = d3.select("body");
+			var dataset = dataset;
+			var selectData = [ 	{ "text": "St1_trans"},
+							{ "text": "St2_trans"},
+							{ "text": "St3_trans"},
+							{ "text": "St4_trans"},
+							{ "text": "St5_trans"}] 
+		  var maxX = d3.max(dataset, function(d) { if (parseFloat(d["St1_trans"])==0) {return 0.001} else {return parseFloat(d["St1_trans"]) } });
+		  var minX = d3.min(dataset, function(d) { if (parseFloat(d["St1_trans"])==0) {return 0.001} else {return parseFloat(d["St1_trans"]) } });
+		  var maxY = d3.max(dataset, function(d) { if (parseFloat(d["St2_trans"])==0) {return 0.001} else {return parseFloat(d["St2_trans"]) } });
+		  var minY = d3.min(dataset, function(d) { if (parseFloat(d["St2_trans"])==0) {return 0.001} else {return parseFloat(d["St2_trans"]) } });
+  
+		// Select X-axis Variable
+		var span = body.append('span')
+		.text('Select X-axis variable: ')
+		var xInput = body.append('select')
+		  .attr('id','xSelect')
+		  .on('change',xChange)
+		  .selectAll('option')
+		  .data(selectData)
+		  .enter()
+		  .append('option')
+		  .property("selected", function(d){ return d.text == "St1_trans"; })
+		  .attr('value', function (d) { return d.text })
+		  .text(function (d) { return d.text ;})
+		body.append('br')
+			 
+		  // Select Y-axis Variable
+		  var span = body.append('span')
+		      .text('Select Y-axis variable: ')
+		  var yInput = body.append('select')
+		      .attr('id','ySelect')
+		     .on('change',yChange)
+		    .selectAll('option')
+		      .data(selectData)
+		      .enter()
+		      .append('option')
+		      .property("selected", function(d){ return d.text == "St2_trans"; })
+		      .attr('value', function (d) { return d.text })
+		      .text(function (d) { return d.text ;})
+		  body.append('br')
+			  
+	 	// Defining the scales
+		var xScale = d3.scale.log()
+			.domain([minX, maxX])
+			.range([padding, w - padding])
+			.nice();
+		var yScale = d3.scale.log()
+			.domain([minY, maxY])
+			.range([h - padding, padding])
+			.nice();
+       			
+		// Defining axis
+		var xAxis = d3.svg.axis() 
+			.scale(xScale)
+            .orient("bottom");			
+		//Define Y axis
+		var yAxis = d3.svg.axis() 
+			.scale(yScale)
+            .orient("left");
+            //.ticks(5);
+		
+		//Create SVG element
+		var svg = body
+			.append("svg")
+			.attr("width", w)
+			.attr("height", h);
+			
+		/*// Add tooltip area to web page
+		var tooltip = d3.select("body")
+			.append("div")
+		    .attr("class", "tooltip")
+		    .style("opacity", .8)
+			.style("background-color", "white")
+			.style("position", "absolute")
+			.style("border", "solid black 1px");*/
+		// Define the div for the tooltip
+		var div = d3.select("body").append("div")	
+		    .attr("class", "tooltip")				
+		    .style("opacity", 0);
+	   
+			// X-axis
+			svg.append('g')
+			  .attr('class','axis')
+			  .attr("transform", "translate (0, "+(h-padding) + ")")
+			  .attr('id','xAxis')
+			  .call(xAxis)
+			.append('text') // X-axis Label
+			  .attr('id','xAxisLabel')
+			  .attr("x", 0.5*w-40)
+			  .attr("y", 5)
+			  .attr('dy','2.5em')
+			  .text('St1_trans')
+			
+		// Y-axis
+		svg.append('g')
+		  .attr('class','axis')
+		  .attr("transform", "translate(" + padding + ",0)")
+		  .attr('id','yAxis')
+		  .call(yAxis)
+		.append('text') // y-axis Label
+		  .attr('id', 'yAxisLabel')
+		  .attr('transform','rotate(-90)')
+		  .attr("x", -0.6*h)
+		  .attr("y", -10)
+		  .attr("dy", "-3em")
+    	  .attr("font-size", "14px")
+		  .text('St2_trans')				
+
+			
+		// Creating circles on scatter
+		svg.selectAll("circle")
+	        .data(dataset)
+	        .enter()
+	        .append("circle")
+			.attr("cx", function(d) { 
+				if (parseFloat(d["St1_trans"])>=0.001) {return xScale(parseFloat(d["St1_trans"]))}
+				else {return xScale(0.001)};
+			})
+			.attr("cy", function(d) { 
+				if (parseFloat(d["St2_trans"])>=0.001) {return parseFloat(yScale(d["St2_trans"]))}
+				else {return yScale(0.001)};
+			})
+			.attr("r", function(d) {
+			return 2})
+			.attr('fill', 'orange')
+			.on("mouseover", function(d) {
+				div.transition()
+					.duration(200)
+					.style("opacity", .9);
+					div.html("<b>"+d["NCBI_GENE_ID"]+"</b>"+"<br/>"+ parseFloat(d["St1_trans"]).toFixed(2) 
+					+ "<br/>"+ parseFloat(d["St2_trans"]).toFixed(2))
+	 			   	.style("left", xScale(d["St1_trans"]) + "px")
+	                .style("top", (yScale(d['St2_trans'])+200) + "px")
+					.style("font-size", 10 + "px");
+			})
+			.on("mouseout", function(d) {
+				div.transition()
+					.duration(500)
+				.style("opacity", 0);
+			});
+			;
+			  
+		    function yChange() {
+		      var value = this.value // get the new y value
+		      yScale // change the yScale
+		        .domain([
+		          d3.min(dataset, function(d) { if (parseFloat(d[value])==0) {return 0.001} else {return parseFloat(d[value]) } }),
+		          d3.max(dataset, function(d) { if (parseFloat(d[value])==0) {return 0.001} else {return parseFloat(d[value]) } })
+		          ])
+		      yAxis.scale(yScale) // change the yScale
+		      d3.select('#yAxis') // redraw the yAxis
+		        .transition().duration(1000)
+		        .call(yAxis)
+		      d3.select('#yAxisLabel') // change the yAxisLabel
+		        .text(value)    
+		      d3.selectAll('circle') // move the circles
+		        .transition().duration(1000)
+		          .attr('cy',function (d) { if (parseFloat(d[value])>=0.001) {return parseFloat(yScale(d[value]))}
+				else {return yScale(0.001)};
+			})
+		    }
+
+		    function xChange() {
+		      var value = this.value // get the new x value
+		      xScale // change the xScale
+		        .domain([
+		          d3.min(dataset, function(d) { if (parseFloat(d[value])==0) {return 0.001} else {return parseFloat(d[value]) } }),
+		          d3.max(dataset, function(d) { if (parseFloat(d[value])==0) {return 0.001} else {return parseFloat(d[value]) } })
+		          ])
+		      xAxis.scale(xScale) // change the xScale
+		      d3.select('#xAxis') // redraw the xAxis
+		        .transition().duration(1000)
+		        .call(xAxis)
+		      d3.select('#xAxisLabel') // change the xAxisLabel
+		        .transition().duration(1000)
+		        .text(value)
+		      d3.selectAll('circle') // move the circles
+		        .transition().duration(1000)
+		          .attr('cx',function (d) { if (parseFloat(d[value])>=0.001) {return parseFloat(xScale(d[value]))}
+				else {return xScale(0.001)};
+			})
+		}
+	    
+	   });
+	    </script>
+    </body>
+</html>
