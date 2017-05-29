@@ -110,8 +110,8 @@
 				.call(d3.axisBottom().scale(xScale))
 				.attr("transform", "translate (0, "+(h-padding) + ")");*/
 		
-			/*//Create Y axis on the plot
-			svg.append("g")
+			//Create Y axis on the plot
+			/*svg.append("g")
 				.attr("class", "axis")
 				.attr("transform", "translate(" + padding + ",0)")
 				.call(yAxis)
@@ -182,13 +182,13 @@
 			      	yScale // change the yScale
 			        	.domain([lowy, highy])
 					yAxis.scale(yScale)
-			      	//d3.select('#yAxis') // redraw the yAxis
-			        //	.transition().duration(1000)
+			      	d3.select('#yAxis') // redraw the yAxis
+			        	.transition().duration(1000)
 				    d3.selectAll('circle') // move the circles
 						.data(trans_coef_dat)
 						.change()
-				        //.transition().duration(1000)
-				          .attr('cy',function (d,i) { return yScale(i)
+				        .transition().duration(1000)
+				        .attr('cy',function (d,i) { return yScale(i)
 						  })
 				});
 			
