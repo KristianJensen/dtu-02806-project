@@ -19,20 +19,29 @@
 </div>
 <div id="figure-div"></div>
 <div id="#container">
-	<div id="description">
+	<div id="description" class="description">
 		This page shows the results of transcriptomics analyses performed on 5 strains.
 		<br><br>Click one of the buttons above to show a plot.
 	</div>
 </div>
 <script>
 	d3.select("#fig1-link").on("click", function() {
-		load_figure_1();
+		load_figure_2();
+		d3.selectAll(".fig-link")
+			.classed("selected", false)
+		d3.select("#fig1-link").classed("selected", true)
 	})
 	d3.select("#fig2-link").on("click", function() {
-		load_figure_2();
+		load_figure_1();
+		d3.selectAll(".fig-link")
+			.classed("selected", false)
+		d3.select("#fig2-link").classed("selected", true)
 	})
 	d3.select("#fig3-link").on("click", function() {
 		load_figure_3();
+		d3.selectAll(".fig-link")
+			.classed("selected", false)
+		d3.select("#fig3-link").classed("selected", true)
 	})
 </script>
 </body>

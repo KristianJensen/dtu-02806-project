@@ -1,11 +1,7 @@
 var load_figure_1 = function() {
 	d3.select("#figure-div").html("");
 	
-	d3.select("#description").html("<b>Strain comparison</b><br>Transcription levels of all genes. Use the drop-down menus to select which strains to compare")
-	
-	d3.selectAll(".fig-link")
-		.classed("selected", false)
-	d3.select("#fig1-link").classed("selected", true)
+	d3.select("#description").html("<b>Strain comparison</b><br>Transcription levels of all genes. Use the drop-down menus to select which strains to compare.<br><br>")
 	
 	// Figure size and margin
 	var w = 600; 
@@ -42,10 +38,13 @@ var load_figure_1 = function() {
 
 	// Select X-axis Variable
     var figure_div = d3.select("#figure-div");
-	  
-	var span = figure_div.append('span')
+	
+	var dropdown_div = figure_div.append("div")
+		.classed("description", true);  
+	
+	var span = dropdown_div.append('span')
 	.text('Select X-axis variable: ')
-	var xInput = figure_div.append('select')
+	var xInput = dropdown_div.append('select')
 	  .attr('id','xSelect')
 	  .on('change',xChange)
 	  .selectAll('option')
@@ -55,12 +54,12 @@ var load_figure_1 = function() {
 	  .property("selected", function(d){ return d.text == "St1_trans"; })
 	  .attr('value', function (d) { return d.text })
 		.text(function (d) { return name_lookup[d.text] ;})
-	figure_div.append('br')
-		 
+	dropdown_div.append('br')
+	
 	  // Select Y-axis Variable
-	  var span = figure_div.append('span')
+	  var span = dropdown_div.append('span')
 	      .text('Select Y-axis variable: ')
-	  var yInput = figure_div.append('select')
+	  var yInput = dropdown_div.append('select')
 	      .attr('id','ySelect')
 	     .on('change',yChange)
 	    .selectAll('option')
@@ -70,7 +69,7 @@ var load_figure_1 = function() {
 	      .property("selected", function(d){ return d.text == "St2_trans"; })
 	      .attr('value', function (d) { return d.text })
 			.text(function (d) { return name_lookup[d.text] ;})
-	  figure_div.append('br')
+	  dropdown_div.append('br')
 		  
  	// Defining the scales
 	var xScale = d3.scaleLog()
@@ -96,14 +95,6 @@ var load_figure_1 = function() {
 		.attr("width", w)
 		.attr("height", h);
 		
-	/*// Add tooltip area to web page
-	var tooltip = d3.select("body")
-		.append("div")
-	    .attr("class", "tooltip")
-	    .style("opacity", .8)
-		.style("background-color", "white")
-		.style("position", "absolute")
-		.style("border", "solid black 1px");*/
 	// Define the div for the tooltip
 	var div = d3.select("body").append("div")	
 	    .attr("class", "tooltip")				
@@ -163,10 +154,10 @@ var load_figure_1 = function() {
 			div.transition()
 				.duration(200)
 				.style("opacity", .9);
-				div.html("<b>"+d["NCBI_GENE_ID"]+"</b>"+"<br/>"+ parseFloat(d["St1_trans"]).toFixed(2) 
-				+ "<br/>"+ parseFloat(d["St2_trans"]).toFixed(2))
- 			   	//.style("left", xScale(d["St1_trans"]) + "px")
-                //.style("top", (yScale(d['St2_trans'])+200) + "px")
+				div.html(
+					"<b>"+d["NCBI_GENE_ID"]+"</b><br/>"
+					+ d["function"]
+				)
 				.style("left", d3.event.pageX + "px")
 				.style("top", d3.event.pageY + "px")
 				.style("font-size", 10 + "px");
@@ -218,13 +209,12 @@ var load_figure_1 = function() {
 			else {return xScale(0.001)};
 		})
 	}
-    
    });
 }
 
 
 //
-// FIGURE 2
+// FIGURE 2 -.-.-.-.-.-.-.-.-.-.-.-.,,,,,
 //
 
 var load_figure_2 = function() {
@@ -236,11 +226,10 @@ var load_figure_2 = function() {
 	
 	d3.select("#figure-div").html("");
 	
-	d3.select("#description").html("Nu er det figur 2");
-	
-	d3.selectAll(".fig-link")
-		.classed("selected", false)
-	d3.select("#fig2-link").classed("selected", true)
+	d3.select("#description").html(
+		"<b>Strain overview</b><br>"
+		+ "Shows the transcription levels for all genes in the 5 strains. Hover over a dot to see the name of the gene. "
+	);
 	
 	var svg = d3.select("#figure-div").append("svg")
 		.attr("height", h)
@@ -271,7 +260,7 @@ var load_figure_2 = function() {
 			
 		var alphaScale = d3.scaleLinear()
 			.domain([0, Math.max(Math.log(maxTrans), -Math.log(minValue))])
-			.range([0.01, 1]);
+			.range([0.05, 1]);
 			
 		var rScale = d3.scaleLinear()
 			.domain([0, Math.max(Math.log(maxTrans), -Math.log(minValue))])
@@ -279,25 +268,9 @@ var load_figure_2 = function() {
 		
 		var strains = ["St1", "St2", "St3", "St4", "St5"];
 		
-		//var tooltip = d3.select("body")
-		//	.append("div")
-		//	.attr("class", "tooltip")
-		//	.style("z-index", "10")
-		//	.style("visibility", "hidden")
-		
 		var tooltip = d3.select("body").append("div")	
 		    .attr("class", "tooltip")				
 		    .style("opacity", 0);
-		
-		
-		//svg.append("line")
-		//	.attr("x1", xScale(0))
-		//	.attr("x2", xScale(6))
-		//	.attr("y1", yScale(1))
-		//	.attr("y2", yScale(1))
-		//	.attr("stroke-width", 1)
-		//	.attr("stroke", "black")
-		//	.attr("opacity", 0.2)
 		
 		svg.selectAll("circle")
 			.data(dataset)
@@ -391,12 +364,8 @@ var load_figure_3 = function() {
 	d3.select("#description").html(
 		"<b>Regression coefficients</b><br>"
 		+ "A linear regression analysis was performed on all strains using transcription levels as predictors and a relevant fitness value as outcome. "
-		+ "The regression coefficients of each gene are shown below. Error bars show the standard error of the estimates."
+		+ "The regression coefficients of each gene are shown below, sorted by the coefficient values. Error bars show the standard error of the estimates."
 	);
-	
-	d3.selectAll(".fig-link")
-		.classed("selected", false)
-	d3.select("#fig3-link").classed("selected", true)
 	
 	var w = 600; 
 	var h = 900;
@@ -439,14 +408,6 @@ var load_figure_3 = function() {
 			.attr("width", w)
 			.attr("height", h);
 		
-		// Add the tooltip area to the webpage
-		/*var tooltip = d3.select("body")
-			.append("div")
-		    .attr("class", "tooltip")
-		    .style("opacity", .8)
-			.style("background-color", "white")
-			.style("position", "absolute")
-			.style("border", "solid black 1px");*/
 		// Define the div for the tooltip
 		var div = d3.select("body").append("div")	
 		    .attr("class", "tooltip")				
@@ -470,25 +431,6 @@ var load_figure_3 = function() {
 			.style("text-anchor", "middle")
 			.text("Regression estimate")
 			.attr("dy", "2em")
-	
-		//axis for D4
-		/*svg.append("g")
-			.call(d3.axisBottom().scale(xScale))
-			.attr("transform", "translate (0, "+(h-padding) + ")");*/
-	
-		//Create Y axis on the plot
-		/*svg.append("g")
-			.attr("class", "axis")
-			.attr("transform", "translate(" + padding + ",0)")
-			.call(yAxis)
-	  	  .append("text")
-	        .attr("class", "label")
-			.attr("transform", "rotate(-90)")
-	        .attr("y", -30)
-			.attr("x", -h/2)
-	        .style("text-anchor", "middle")
-	        .text("Std. error");*/
-		
 			
 		svg.selectAll("line")
 	        .data(trans_coef_dat)
@@ -508,7 +450,6 @@ var load_figure_3 = function() {
 			})
 			.attr('stroke-width', 0.5 + 'px')
 			.attr('stroke', '#bbbbbb');
-			
 			
 		// Creating circles on scatter
 		svg.selectAll("circle")
